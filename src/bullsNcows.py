@@ -111,7 +111,7 @@ def guess(update, context):
     rslt = eval(secret, guess)
     update.message.reply_text("%d| %s:%s" % (context.chat_data['guessCnt'], guess_str, rslt))
 
-    if rslt == "A4B0":
+    if rslt == "4A0B":
         update.message.reply_text("You win. Good game!!")
         context.chat_data['guessCnt'] = 1
         return ConversationHandler.END
