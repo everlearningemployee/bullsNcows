@@ -124,12 +124,12 @@ def guess(update, context):
 
     if rslt == "A4B0":
         update.message.reply_text("자네가 이겼어. 좋은 게임이었네!!")
-        context.chat_data['guessCnt'] = 0
+        context.chat_data['guessCnt'] = 1
         return ConversationHandler.END
     
     if context.chat_data['guessCnt'] == 10:
         update.message.reply_text("내가 이겼네 정답은 %s였다네" % secret)
-        context.chat_data['guessCnt'] = 0
+        context.chat_data['guessCnt'] = 1
         return ConversationHandler.END
 
     context.chat_data['guessCnt'] += 1
