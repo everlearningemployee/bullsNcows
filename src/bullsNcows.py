@@ -1,4 +1,3 @@
-#from telegram import (ReplyKeyboardMarkup, ReplyKeyboardRemove)
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters,
                           ConversationHandler)
 import random
@@ -32,7 +31,7 @@ def eval(q, guess):
     for i in range(len(q2)):
         if g2[i] in q2:
             rsltB += 1
-    return "A%dB%d" % (rsltA,rsltB)
+    return "%dA%dB" % (rsltA,rsltB)
 
 def checkInput(a, l):
     if len(a) != l:
@@ -69,25 +68,15 @@ def bullsNcows():
         rslt = eval(q, guess)
         print("%d: The result is %s:%s" % (cnt,guess_str, rslt))
 
-        if rslt == "A4B0":
-            print("You Win!!")
-            break
-        
-        if cnt == 10:
-            print("I Win!! The numbers was %s" % q)
-
-
 def help(update, context):
     """Send a message when the command /help is issued."""
     logger.info("도움!")
     update.message.reply_text('Help!')
 
-
 def echo(update, context):
     """Echo the user message."""
     logger.info("불렀지")
     update.message.reply_text("나는야 따라쟁이: " + update.message.text)
-
 
 def error(update, context):
     """Log Errors caused by Updates."""
@@ -95,16 +84,16 @@ def error(update, context):
 
 def gameStart(update, context):
     if 'guessCnt' in context.chat_data:
-        update.message.reply_text('이미 시작 하셨구먼. 어서 %d번째 시도를 해보시구랴' 
+        update.message.reply_text("You've already started. Go ahead and try #%d guess"
                                    % context.chat_data['guessCnt'])
         return ON_GAME
     context.chat_data['guessCnt'] = 1
     context.chat_data['secretDigits'] = getSecretDigits(10, 4)
-    update.message.reply_text('시작해볼까? 첫번째 시도를 해보시구랴')
+    update.message.reply_text('Shall we start? Try your first guess')
     return ON_GAME
 
 def gameEnd(update, context):
-    update.message.reply_text('%d번째에 포기라니 아쉽구먼... 정답은 %s 였네' 
+    update.message.reply_text("I'm sorry you gave up on the #%d challenge.... The Secret Number was %s"
                                % (context.chat_data['guessCnt'], context.chat_data['secretDigits']))
     del context.chat_data['guessCnt']
     del context.chat_data['secretDigits']
@@ -123,12 +112,12 @@ def guess(update, context):
     update.message.reply_text("%d| %s:%s" % (context.chat_data['guessCnt'], guess_str, rslt))
 
     if rslt == "A4B0":
-        update.message.reply_text("자네가 이겼어. 좋은 게임이었네!!")
+        update.message.reply_text("You win. Good game!!")
         context.chat_data['guessCnt'] = 1
         return ConversationHandler.END
     
     if context.chat_data['guessCnt'] == 10:
-        update.message.reply_text("내가 이겼네 정답은 %s였다네" % secret)
+        update.message.reply_text("I win. The Secret Number was %s" % secret)
         context.chat_data['guessCnt'] = 1
         return ConversationHandler.END
 
@@ -137,7 +126,6 @@ def guess(update, context):
 
 ON_GAME = 1
 def main():
-    #updater = Updater("489197787:AAEhOz-EvKUo8jdvC1TZRhn9obeREF56nsU", use_context=True)
     updater = Updater("905059867:AAFcGzq02N0iBLPwefq9dRj-61YWqrbSlfg", use_context=True)
 
     dp = updater.dispatcher
@@ -154,22 +142,11 @@ def main():
     )
 
     dp.add_handler(conv_handler)
-
-    # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.text, echo))
-
-    # log all errors
     dp.add_error_handler(error)
 
-    # Start the Bot
     updater.start_polling()
-
-    # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
     updater.idle()
-
 
 if __name__ == '__main__':
     main()
-    #bullsNcows()

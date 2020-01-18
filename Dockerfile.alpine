@@ -1,7 +1,0 @@
-FROM python:3.7.6-alpine
-
-RUN pip install python-telegram-bot
-
-COPY src /bot
-
-CMD ["python", "/bot/bullsNcows.py"]
